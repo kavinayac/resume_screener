@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Classifier</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 10px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        textarea {
+            width: 100%;
+            height: 200px;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f1f1f1;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Resume Classification</h1>
+    <p>Submit your resume text to classify it</p>
+</header>
+
+<div class="container">
+    <form id="resumeForm">
+        <label for="resume">Paste your resume text here:</label><br>
+        <textarea id="resume" name="resume" required></textarea><br>
+        <button type="submit">Classify Resume</button>
+    </form>
+
+    <div id="result" class="result" style="display:none;">
+        <h3>Classification Result:</h3>
+        <p id="category"></p>
+    </div>
+</div>
+
+<script>
+    document.getElementById('resumeForm').addEventListener('submit', function (event) {
+        event.preventDefault();  // Prevent form submission
+
+        const resumeText = document.getElementById('resume').value;
+
+        // Make a POST request to the Flask backend
+        fetch('http://127.0.0.1:5000/predict', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ "resume": resumeText })
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Show the classification result
+            document.getElementById('result').style.display = 'block';
+            document.getElementById('category').textContent = `This resume belongs to the category: ${data.category}`;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+</script>
+
+</body>
+</html>
